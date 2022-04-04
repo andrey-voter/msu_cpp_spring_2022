@@ -1,11 +1,12 @@
-#include <cstddef> 
+#pragma once
+#include <cstddef>
 class Allocator
 {
     size_t offset = 0;
     
     public:
         char *ptr = nullptr;
-        size_t free_space;
+        size_t free_space = 0;
 
     public:
         void makeAllocator(size_t maxSize);

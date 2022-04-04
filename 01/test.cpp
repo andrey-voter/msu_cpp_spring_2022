@@ -5,7 +5,6 @@
 #include <gtest/gtest.h>
 
 
-
 class TestFoo : public ::testing::Test
 {
 protected:
@@ -13,7 +12,6 @@ protected:
     
 	void SetUp()
 	{
-        a.makeAllocator(100);
         std::cout << "SetUp" << std::endl;
 	}
 	void TearDown()
@@ -24,7 +22,11 @@ protected:
 
 TEST_F(TestFoo, alloc)
 {
-    // in SetUp() we allocated 100 so we can get 10
+    // trying to alloc smth before makeAllocator
+	ASSERT_EQ(a.alloc(10), nullptr);
+	
+	a.makeAllocator(100);
+	//we allocated 100 so we can get 10
 	ASSERT_NE(a.alloc(10), nullptr);
 	
 	// cant get 91, cause 91 + 10 > 100
@@ -46,8 +48,32 @@ TEST_F(TestFoo, alloc)
 	//test shows that alloc works correctly with numbers <= 0
 	ASSERT_EQ(a.alloc(-1), nullptr);
 	ASSERT_EQ(a.alloc(0), nullptr);
+
+	//added some more test
+	a.makeAllocator(1);
+	ASSERT_NE(a.alloc(1), nullptr);
+	ASSERT_EQ(a.alloc(1), nullptr);
+	a.makeAllocator(50);
+	ASSERT_NE(a.alloc(20), nullptr);
+	ASSERT_NE(a.alloc(30), nullptr);
+	ASSERT_EQ(a.alloc(1), nullptr);
+	a.reset();
+	ASSERT_NE(a.alloc(50), nullptr);
+	a.reset();
+	char* p1 = a.alloc(10); 
+	char* p2 = a.alloc(10); 
+	ASSERT_EQ(p2 - p1, 10);
 }
 
+TEST_F(TestFoo, makeAllocator)
+{
+	//using makeAllocator two times in a row
+	a.makeAllocator(10);
+	a.makeAllocator(5);
+	//shows that we cant get 6, but can get 5
+	ASSERT_EQ(a.alloc(6), nullptr);	
+	ASSERT_NE(a.alloc(5), nullptr);		
+}
 
 int main(int argc, char **argv)
 {
