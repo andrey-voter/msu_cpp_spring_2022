@@ -1,27 +1,28 @@
 #include <iostream>
 #include <string>
 #include <functional>
+#include <vector>
 #include "Tokenparser.hpp"
 
-void TokenParser :: SetStartCallback(std :: function<void()>f)
+void TokenParser::SetStartCallback(FooPtrVoid f)
 {
     this->StartF = f;
 }
-void TokenParser :: SetEndCallback(std :: function<void()>f)
+void TokenParser::SetEndCallback(FooPtrVoid f)
 {
     this->EndF = f;
 }
-void TokenParser :: SetDigitTokenCallback(std :: function<int(std::string)> f)
+void TokenParser::SetDigitTokenCallback(FooPtrInt f)
 {
     this->DigitF = f;
 }
 
-void TokenParser :: SetStrTokenCallback(std :: function<int(std::string)> f)
+void TokenParser::SetStrTokenCallback(FooPtrStr f)
 {
     this->StrF = f;
 }
 
-bool TokenParser :: IsDigitToken(std :: string line)
+bool TokenParser::IsDigitToken(std::string line)
 {
     int digit_flag = 0;
     int str_flag = 0;
@@ -73,12 +74,16 @@ void TokenParser :: Parse(const std::string & line)
             if (IsDigitToken(token))
             {
                 if(DigitF)
-                    DigitF(token);
+                {   
+                    DigitF(std :: stoi(token));
+                }
             }
             else
             {
                 if(StrF)
+                {
                     StrF(token);
+                }
             }
         }
         start = stop + 1;

@@ -3,6 +3,11 @@
 #include <iostream>
 #include <string>
 #include <functional>
+#include <vector>
+
+using FooPtrVoid = std::function<void()>;
+using FooPtrStr = std::function<int(std :: string)>;
+using FooPtrInt = std::function<int(uint64_t)>;
 
 class TokenParser
 {
@@ -10,24 +15,24 @@ public:
     TokenParser() = default;
 
     // Устанавливаем callback-функцию перед стартом парсинга.
-    void SetStartCallback(std :: function<void()>f);
+    void SetStartCallback(FooPtrVoid f);
 
     // Устанавливаем callback-функцию после окончания парсинга.
-    void SetEndCallback(std :: function<void()>f);
+    void SetEndCallback(FooPtrVoid f);
 
     // Устанавливаем callback-функцию для обработки чисел.
-    void SetDigitTokenCallback(std :: function<int(std::string)> f);
+    void SetDigitTokenCallback(FooPtrInt f);
    
     // Устанавливаем callback-функцию для обработки строк.
-    void SetStrTokenCallback(std :: function<int(std::string)> f);
+    void SetStrTokenCallback(FooPtrStr f);
 
     void Parse(const std::string &);
     // возвращает 1, если токен цифровой
-    bool IsDigitToken(std :: string line);
+    bool IsDigitToken(std::string line);
     
-    std :: function<void()> StartF;
-    std :: function<void()> EndF;
-    std :: function<int(std::string)> DigitF;
-    std :: function<int(std::string)> StrF;
+    FooPtrVoid StartF;
+    FooPtrVoid EndF;
+    FooPtrInt DigitF;
+    FooPtrStr StrF;
 };
 

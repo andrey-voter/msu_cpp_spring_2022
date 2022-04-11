@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <functional>
+#include <vector>
 
 #include "Tokenparser.hpp"
 
@@ -11,21 +12,21 @@ int StrTokenCnt = 0;
 
 void  DefaultStartF()
 {
-    std :: cout << "Start parsing" << std :: endl;
+    std::cout << "Start parsing" << std::endl;
 }
 void DefaultEndF()
 {
-    std :: cout << "Finished parsing" << std :: endl;
+    std::cout << "Finished parsing" << std::endl;
 }
-int DefaultDigitF(std :: string line)
+int DefaultDigitF(uint64_t num)
 {
-    std :: cout << "got digit token " << line << std :: endl;
+    std::cout << "got digit token " << num << std::endl;
     DigitTokenCnt++;
     return DigitTokenCnt;
 }
-int  DefaultStrF(std :: string line)
+int  DefaultStrF(std::string line)
 {
-    std :: cout << "got str token " << line << std :: endl;
+    std::cout << "got str token " << line << std::endl;
     StrTokenCnt++;
     return StrTokenCnt;
 }

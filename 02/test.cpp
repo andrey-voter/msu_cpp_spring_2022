@@ -18,7 +18,21 @@ protected:
 	}
 };
 
-TEST_F(TestTokenParser, test_IsDigitToken) {
+
+int DigitF (std::vector<uint64_t> *v, uint64_t num)
+{
+    (*v).push_back(num);
+    return 0;
+}
+int StrF (std::vector<std::string> *v, std::string line)
+{
+    (*v).push_back(line);
+    return 0;
+}
+
+
+TEST_F(TestTokenParser, TestIsDigitToken) 
+{
     std::string test_string = "";
     ASSERT_FALSE(parser.IsDigitToken(test_string));
     
@@ -58,7 +72,80 @@ TEST_F(TestTokenParser, test_IsDigitToken) {
 
     test_string = "EFVMOVEROVM";
     ASSERT_FALSE(parser.IsDigitToken(test_string));
+
+    test_string = "";
+    ASSERT_FALSE(parser.IsDigitToken(test_string));
+
+    test_string = "         ";
+    ASSERT_FALSE(parser.IsDigitToken(test_string));
+
+    test_string = "1";
+    ASSERT_TRUE(parser.IsDigitToken(test_string));
+
+    test_string = "a";
+    ASSERT_FALSE(parser.IsDigitToken(test_string));
+
+    test_string = "1331132asdadasd";
+    ASSERT_FALSE(parser.IsDigitToken(test_string));
+
+    test_string = "18446744073709551616";
+    ASSERT_TRUE(parser.IsDigitToken(test_string));
+
+    test_string = "18446744073709551615";
+    ASSERT_TRUE(parser.IsDigitToken(test_string));
+
+    test_string = "36893488147419103232";
+    ASSERT_TRUE(parser.IsDigitToken(test_string));
 }
+
+TEST_F(TestTokenParser, TestNullptrCallback) 
+{
+    parser.SetStartCallback(nullptr);
+    parser.SetEndCallback(nullptr);
+    parser.SetDigitTokenCallback(nullptr);
+    parser.SetStrTokenCallback(nullptr);
+    ASSERT_EQ(parser.StrF, nullptr);
+    ASSERT_EQ(parser.DigitF, nullptr);
+    ASSERT_EQ(parser.StartF, nullptr);
+    ASSERT_EQ(parser.EndF, nullptr);
+}
+
+
+TEST_F(TestTokenParser, TestCallbackUseOrder) 
+{
+    std::vector<uint64_t> DigitV;
+    std::vector<std::string> StrV;
+    auto TestDigitF = std::bind(DigitF, &DigitV, std::placeholders::_1);
+    auto TestStrF = std::bind(StrF, &StrV, std::placeholders::_1);
+    parser.SetDigitTokenCallback(TestDigitF);
+    parser.SetStrTokenCallback(TestStrF);
+    std::string test_string = "";
+
+    //проверяем порядок вызова колбеков, а также правильность их аргументов
+    test_string = "12345 abcdef";
+    std::vector<uint64_t>test_vector_dig =  {12345};
+    std::vector<std::string>test_vector_str =  {"abcdef"};
+    parser.Parse(test_string);
+    ASSERT_EQ(DigitV, test_vector_dig);
+    ASSERT_EQ(StrV, test_vector_str);
+    test_vector_dig.clear();
+    test_vector_str.clear();
+    DigitV.clear();
+    StrV.clear();
+
+    test_string = "1234 abcdef fffff lulU 11";
+    test_vector_dig =  {1234, 11};
+    test_vector_str =  {"abcdef", "fffff", "lulU"};
+    parser.Parse(test_string);
+    ASSERT_EQ(DigitV, test_vector_dig);
+    ASSERT_EQ(StrV, test_vector_str);
+    test_vector_dig.clear();
+    test_vector_str.clear();
+    DigitV.clear();
+    StrV.clear();
+}
+
+
 
 int main(int argc, char **argv) 
 {
