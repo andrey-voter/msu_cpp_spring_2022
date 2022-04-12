@@ -48,10 +48,10 @@ void TokenParser :: Parse(const std::string & line)
         StartF();
     int start = 0;
     int stop = 0;
-    int i = 0;
+    unsigned long long i = 0;
     // проходим мимо возможных пробелов и символов табуляции в начале
 
-    for (i; i < line.size(); i++)
+    for (; i < line.size(); i++)
     {
         while (line[i] == ' ' || line[i] == '\t' || line[i] == '\n' || line[i] == '\0')
         {
@@ -61,21 +61,33 @@ void TokenParser :: Parse(const std::string & line)
         break;
     }  
     // обрабатываем оставшуюся часть строки
-    for (i; i < line.size(); i++)    
+    for (; i < line.size(); i++)    
     {
         while (line[i] != ' ' && line[i] != '\t' && line[i] != '\n'  && line[i] != '\0' && i < line.size())
         {
 			i++;
 		}
         stop = i;
-        std :: string token = line.substr(start, stop-start);
+        std::string token = line.substr(start, stop-start);
         if (token.size() > 0)
         {
             if (IsDigitToken(token))
             {
                 if(DigitF)
                 {   
-                    DigitF(std :: stoi(token));
+                    try
+                    {
+                        DigitF(std::stoull(token));
+                    }
+                    catch(const std::exception& e)
+                    {
+                        if(StrF)
+                        {
+                            StrF(token);
+                        }
+                    }
+                    
+                   
                 }
             }
             else
@@ -89,5 +101,5 @@ void TokenParser :: Parse(const std::string & line)
         start = stop + 1;
     }
     if (EndF)
-        EndF();
+        EndF(); 
 }

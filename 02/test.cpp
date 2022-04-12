@@ -100,6 +100,7 @@ TEST_F(TestTokenParser, TestIsDigitToken)
 
 TEST_F(TestTokenParser, TestNullptrCallback) 
 {
+    std::string test_string = "3233434fvfvfvfvvf";
     parser.SetStartCallback(nullptr);
     parser.SetEndCallback(nullptr);
     parser.SetDigitTokenCallback(nullptr);
@@ -108,6 +109,7 @@ TEST_F(TestTokenParser, TestNullptrCallback)
     ASSERT_EQ(parser.DigitF, nullptr);
     ASSERT_EQ(parser.StartF, nullptr);
     ASSERT_EQ(parser.EndF, nullptr);
+    parser.Parse(test_string);
 }
 
 
@@ -136,6 +138,122 @@ TEST_F(TestTokenParser, TestCallbackUseOrder)
     test_string = "1234 abcdef fffff lulU 11";
     test_vector_dig =  {1234, 11};
     test_vector_str =  {"abcdef", "fffff", "lulU"};
+    parser.Parse(test_string);
+    ASSERT_EQ(DigitV, test_vector_dig);
+    ASSERT_EQ(StrV, test_vector_str);
+    test_vector_dig.clear();
+    test_vector_str.clear();
+    DigitV.clear();
+    StrV.clear();
+
+    test_string = "1";
+    test_vector_dig =  {1};
+    test_vector_str =  {};
+    parser.Parse(test_string);
+    ASSERT_EQ(DigitV, test_vector_dig);
+    ASSERT_EQ(StrV, test_vector_str);
+    test_vector_dig.clear();
+    test_vector_str.clear();
+    DigitV.clear();
+    StrV.clear();
+
+	test_string = "a";
+    test_vector_dig =  {};
+    test_vector_str =  {"a"};
+    parser.Parse(test_string);
+    ASSERT_EQ(DigitV, test_vector_dig);
+    ASSERT_EQ(StrV, test_vector_str);
+    test_vector_dig.clear();
+    test_vector_str.clear();
+    DigitV.clear();
+    StrV.clear();
+
+	test_string = "1323131132ddsdvfdeecc";
+    test_vector_dig =  {};
+    test_vector_str =  {"1323131132ddsdvfdeecc"};
+    parser.Parse(test_string);
+    ASSERT_EQ(DigitV, test_vector_dig);
+    ASSERT_EQ(StrV, test_vector_str);
+    test_vector_dig.clear();
+    test_vector_str.clear();
+    DigitV.clear();
+    StrV.clear();
+
+    //проверяем пустую строку
+    test_string = "";
+    test_vector_dig =  {};
+    test_vector_str =  {};
+    parser.Parse(test_string);
+    ASSERT_EQ(DigitV, test_vector_dig);
+    ASSERT_EQ(StrV, test_vector_str);
+    test_vector_dig.clear();
+    test_vector_str.clear();
+    DigitV.clear();
+    StrV.clear();
+
+    //проверяем строку из символов табуляции
+    test_string = "						";
+    test_vector_dig =  {};
+    test_vector_str =  {};
+    parser.Parse(test_string);
+    ASSERT_EQ(DigitV, test_vector_dig);
+    ASSERT_EQ(StrV, test_vector_str);
+    test_vector_dig.clear();
+    test_vector_str.clear();
+    DigitV.clear();
+    StrV.clear();
+
+    //проверяем строку из пробелов
+    test_string = "     ";
+    test_vector_dig =  {};
+    test_vector_str =  {};
+    parser.Parse(test_string);
+    ASSERT_EQ(DigitV, test_vector_dig);
+    ASSERT_EQ(StrV, test_vector_str);
+    test_vector_dig.clear();
+    test_vector_str.clear();
+    DigitV.clear();
+    StrV.clear();
+
+	//проверяем что 2^64 будет обработан как строка
+	test_string = "18446744073709551616";
+    test_vector_dig =  {};
+    test_vector_str =  {"18446744073709551616"};
+    parser.Parse(test_string);
+    ASSERT_EQ(DigitV, test_vector_dig);
+    ASSERT_EQ(StrV, test_vector_str);
+    test_vector_dig.clear();
+    test_vector_str.clear();
+    DigitV.clear();
+    StrV.clear();
+
+	//проверяем что 2^64-1 будет обработан как число
+	test_string = "18446744073709551615";
+    test_vector_dig =  {18446744073709551615ULL};
+    test_vector_str =  {};
+    parser.Parse(test_string);
+    ASSERT_EQ(DigitV, test_vector_dig);
+    ASSERT_EQ(StrV, test_vector_str);
+    test_vector_dig.clear();
+    test_vector_str.clear();
+    DigitV.clear();
+    StrV.clear();
+
+	//проверяем что 2^65 будет обработан как строка
+	test_string = "36893488147419103232";
+    test_vector_dig =  {};
+    test_vector_str =  {"36893488147419103232"};
+    parser.Parse(test_string);
+    ASSERT_EQ(DigitV, test_vector_dig);
+    ASSERT_EQ(StrV, test_vector_str);
+    test_vector_dig.clear();
+    test_vector_str.clear();
+    DigitV.clear();
+    StrV.clear();
+
+	test_string = "12345678 abcdefgh 12345 abcd";
+    test_vector_dig =  {12345678, 12345};
+    test_vector_str =  {"abcdefgh", "abcd"};
     parser.Parse(test_string);
     ASSERT_EQ(DigitV, test_vector_dig);
     ASSERT_EQ(StrV, test_vector_str);
