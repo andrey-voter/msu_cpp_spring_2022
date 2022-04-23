@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #include "BigInt.hpp"
 
 #include <iostream>
@@ -385,6 +384,3 @@ namespace custom
 		return os;
 	}
 }
-=======
-
->>>>>>> origin/main
