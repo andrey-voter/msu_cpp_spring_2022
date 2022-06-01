@@ -6,14 +6,8 @@ Matrix::ProxyRow::ProxyRow(size_t n = 1)
 {
     data_ = new int32_t[n];
     this->size = n;
-} 
-
-int32_t& Matrix::ProxyRow::operator[](size_t j)
-{
-    if (j >= size)
-        throw std::out_of_range("");
-    return data_[j];
 }
+
 Matrix::Matrix(size_t m, size_t n)
 {
     if (m == 0 || n == 0)
@@ -27,10 +21,29 @@ Matrix::Matrix(size_t m, size_t n)
     }
 }
 
+Matrix::~Matrix()
+{
+    if (rows_ != nullptr)
+    {
+        delete [] rows_;
+        rows_ = nullptr;
+    }
+}
+
+
 Matrix::Matrix(Matrix & other)
 {
     *this = other;
 }
+
+
+int32_t& Matrix::ProxyRow::operator[](size_t j)
+{
+    if (j >= size)
+        throw std::out_of_range("");
+    return data_[j];
+}
+
 
 Matrix::ProxyRow& Matrix::operator[](size_t i)
 {
@@ -46,7 +59,7 @@ void Matrix::operator *= (size_t k)
             rows_[i][j] *= k;
         }
 }
-bool Matrix::operator == (Matrix& other)
+bool Matrix::operator == (Matrix& other) const
 {   
     if (this->m != other.getRows()) 
         return false;
@@ -58,7 +71,7 @@ bool Matrix::operator == (Matrix& other)
                 return false;
     return true;    
 }
-bool Matrix::operator != (Matrix& other)
+bool Matrix::operator != (Matrix& other) const
 {
     return !(*this == other);
 }
@@ -72,7 +85,7 @@ Matrix& Matrix::operator = (Matrix& other)
     return *this;
 }
 
-Matrix Matrix::operator + (Matrix & other)
+Matrix Matrix::operator + (Matrix & other) const
 {
     if (this->m != other.getRows()) 
         throw std::logic_error("");
@@ -86,12 +99,12 @@ Matrix Matrix::operator + (Matrix & other)
         }
     return tmp;
 }
-size_t Matrix::getRows()
+size_t Matrix::getRows() const
 {
     return this->m;
 }
 
-size_t Matrix::getColumns()
+size_t Matrix::getColumns() const
 {
     return this->n;
 }

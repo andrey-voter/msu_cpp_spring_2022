@@ -105,6 +105,52 @@ TEST_F(TestMatrix, TesEquality)
     ASSERT_TRUE(m1 != m2); 
     ASSERT_FALSE(m1 == m2); 
 }
+
+TEST_F(TestMatrix, TesGetElem)
+{
+    Matrix m1(5, 3);
+    for (int i = 0; i < 5; i++)
+        for (int j = 0; j < 3; j++)
+            m1[i][j] = i + j;
+    for (int i = 0; i < 5; i++)
+        for (int j = 0; j < 3; j++)
+            ASSERT_EQ(m1[i][j], i + j);
+}
+
+TEST_F(TestMatrix, TestDifferentSizes)
+{
+    Matrix m1(1, 1);
+    Matrix m2(1, 1);
+    Matrix m4(10, 1);
+    Matrix m5(1, 10);
+    Matrix m_test(1, 1);
+    m1[0][0] = 1;
+    m2[0][0] = 2;
+    m_test[0][0] = 3;
+    Matrix m3 = m1 + m2;
+    ASSERT_TRUE(m3 == m_test);
+    ASSERT_THROW(m4 + m1, std::logic_error);
+    ASSERT_THROW(m5 + m1, std::logic_error);
+    ASSERT_THROW(m4 + m5, std::logic_error);
+
+}
+
+TEST_F(TestMatrix, TestCout)
+{
+    Matrix m1(4, 4);
+    std::ostringstream oss;
+    for(size_t i = 0; i < m1.getRows(); i++)
+    {
+        for (size_t j = 0; j < m1.getColumns(); j++)
+            oss  <<  m1[i][j]<< " ";
+        oss << std::endl;
+    }
+    oss << std::endl;
+    std::ostringstream os;
+    os << m1;
+    ASSERT_EQ(oss.str(), os.str());
+}
+
 int main(int argc, char **argv) 
 {
 	::testing::InitGoogleTest(&argc, argv);

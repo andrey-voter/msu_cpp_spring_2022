@@ -19,14 +19,15 @@ class Matrix
 public:
     Matrix(size_t m = 1, size_t n = 1);
     Matrix(Matrix &);
+    virtual ~Matrix();
     ProxyRow& operator[](size_t i);
     void operator *= (size_t k);
-    bool operator == (Matrix & other);
-    bool operator != (Matrix & other);
-    Matrix operator + (Matrix & other);
+    bool operator == (Matrix & other) const;
+    bool operator != (Matrix & other) const;
+    Matrix operator + (Matrix & other) const;
     Matrix& operator = (Matrix& other);
-    size_t getRows();
-    size_t getColumns();
+    size_t getRows() const;
+    size_t getColumns() const;
 
 private:
     ProxyRow *rows_;
